@@ -43,7 +43,7 @@ metadata {
 		name: "Fronius Solar Inverter",
 		namespace: "dJOS",
 		author: "Derek Osborn",
-		importUrl:" "
+		importUrl:"https://raw.githubusercontent.com/dJOS1475/Fronius_Inverter_Driver_Hubitat/main/Fronius_Solar_Inverter.groovy"
 	) {
 	capability "Polling"
 	capability "PowerMeter"
