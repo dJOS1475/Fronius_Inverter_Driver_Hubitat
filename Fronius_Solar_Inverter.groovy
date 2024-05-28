@@ -12,6 +12,13 @@
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
  *
+ *  EDITED by jchurch to include runEvery15Minutes(refresh) - 02/20
+ *  EDITED by jchurch and Markus to include ErrorCode information and clean up ported code for Hubitat slightly - 02/20
+ *  EDITED by jchurch and Markus to include kWh conversation for energy stat - 02/21
+ *  Updates by HardyM to give 1 min updates, reduce to 30 mins polls overnight, and also return data from Fronius SmartMeter to give Grid power and Load. 2021-07-25
+ *  Dec 18,2021.  Added attribute access to pGrid and pLoad. (HardyM)
+ *  Jan 22,2024 - Updated to work with latest API (Sébastien Viel & Stephen Townsend)
+ *
  *  May 2024 - Forked by Derek Osborn 
  *	v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access
  *  
