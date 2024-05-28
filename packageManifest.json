@@ -4,7 +4,7 @@
   "version": "2.0",
   "minimumHEVersion": "2.2.2",
   "dateReleased": "2024-05-28",
-  "releaseNotes": "v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access",
+  "releaseNotes": "v2.1.0 - Converted Lifetime Energy to Megawatt hours for improved ledgibility",
   "communityLink": "https://community.hubitat.com/t/re-release-fronius-solar-inverter-driver-for-hubitat/138555?u=djos",
   "drivers": [
     {
