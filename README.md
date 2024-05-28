@@ -15,7 +15,8 @@ on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expres
 for the specific language governing permissions and limitations under the License.
 
 May 2024 - Modified by Derek Osborn 
-	v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access
+
+v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access
 
 Source:
 https://github.com/dJOS1475/Fronius_Inverter_Driver_Hubitat
