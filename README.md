@@ -24,4 +24,5 @@ https://github.com/dJOS1475/Fronius_Inverter_Driver_Hubitat
 Forked from:
 https://github.com/SebastienViel/FroniusInverter/tree/main
 
-
+Hubitat Community Topic:
+https://community.hubitat.com/t/re-release-fronius-solar-inverter-driver-for-hubitat/138555?u=djos
