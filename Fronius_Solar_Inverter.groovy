@@ -1,5 +1,5 @@
 /**
- *  Fronius Solar Inverter Driver
+ *  Fronius Solar Inverter Driver for Hubitat
  *
  *	Copyright 2024 Derek Osborn
  *
