@@ -3,7 +3,7 @@
  *
  *	Copyright 2024 Derek Osborn
  *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ *  Licensed under the Apache License, Version 210 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
@@ -21,6 +21,7 @@
  *
  *  May 2024 - Forked by Derek Osborn 
  *	v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access
+ *  v2.1.0 - Converted Year and Lifetime to Megawatt hours for improved ledgibility 
  *  
  *  Source:
  *  https://github.com/dJOS1475/Fronius_Inverter_Driver_Hubitat
@@ -34,7 +35,7 @@ import groovy.json.JsonSlurper
 import java.math.BigDecimal
 
 def version() {
-    return "2.0.0"
+    return "2.1.0"
 }
 
 preferences {
@@ -67,9 +68,8 @@ metadata {
 	attribute "YearValue", "number"
 	attribute "DayValue", "number"
     attribute 'healthStatus', 'enum', ['unknown', 'offline', 'online']
-
     attribute "energyTodayKWh", "number"
-    attribute "energyTotalKWh", "number"
+    attribute "energyTotalMWh", "number"
     attribute "energyYearKWh", "number"
     attribute "htmlEnergy", "string"
 	}
@@ -122,8 +122,7 @@ def parse(String description) {
         //Convert Wh values to kWh Values
         def energyValuesWh = [
             energyTodayWh: result.Body.Data.Site.E_Day,
-            energyTotalWh: result.Body.Data.Site.E_Total,
-            energyYearWh: result.Body.Data.Site.E_Year
+            energyYearWh: result.Body.Data.Site.E_Year,
         ]
         
         energyValuesWh.each { name, whValue ->
@@ -132,6 +131,19 @@ def parse(String description) {
             sendEvent(name: name.replace("Wh", "KWh"), value: kwhValue)
             log.debug "${whValue} Wh is equal to ${kwhValue} kWh"
         }
+
+        // Convert Wh values to MWh Values
+        def energyValuesWh2 = [
+            energyTotalWh2: result.Body.Data.Site.E_Total,
+        ]
+
+        energyValuesWh2.each { name, whValue2 ->
+            def MwhValue = Math.round((whValue2 / 1000000.0) * 100) / 100.0
+            sendEvent(name: name, value: whValue2)
+            sendEvent(name: "energyTotalMWh", value: MwhValue)
+            log.debug "${whValue2} Wh is equal to ${MwhValue} MWh"
+        }
+
         //Update HTML Tile
         htmlTile()
 
@@ -153,7 +165,7 @@ def htmlTile() {
     htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Today: ${device.currentValue('energyTodayKWh')} kWh<br></div>"
     htmlEnergy +="<div style='line-height:50%;'><br></div>"
     htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>This Year: ${device.currentValue('energyYearKWh')} kWh<br></div>"
-    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Lifetime: ${device.currentValue('energyTotalKWh')} kWh<br></div>"
+    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Lifetime: ${device.currentValue('energyTotalMWh')} MWh<br></div>"
 	sendEvent(name: "htmlEnergy", value: htmlEnergy)
 	if(txtEnable == true){log.debug "htmlEnergy contains ${htmlEnergy}"}		
 	if(txtEnable == true){log.debug "${htmlEnergy.length()}"}			
