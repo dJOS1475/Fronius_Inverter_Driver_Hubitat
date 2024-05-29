@@ -4,7 +4,7 @@
   "version": "2.1.0",
   "minimumHEVersion": "2.2.2",
   "dateReleased": "2024-05-28",
-  "releaseNotes": "v2.1.0 - Converted Lifetime Energy to Megawatt hours for improved legibility",
+  "releaseNotes": "v2.2.0 - I realised I could have reused some existing functions, so I've rewritten a few bits to make the code more efficient",
   "communityLink": "https://community.hubitat.com/t/re-release-fronius-solar-inverter-driver-for-hubitat/138555?u=djos",
   "drivers": [
     {
