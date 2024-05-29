@@ -1,10 +1,10 @@
 {
   "packageName": "Fronius Solar Inverter Driver for Hubitat",
   "author": "Derek Osborn",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "minimumHEVersion": "2.2.2",
   "dateReleased": "2024-05-28",
-  "releaseNotes": "v2.2.0 - I realised I could have reused some existing functions, so I've rewritten a few bits to make the code more efficient. I also changed generation for this year to MWh's as this number can get pretty big too.",
+  "releaseNotes": "v2.2.1 - added a 250ms delay to the tile generation to ensure all data is updated first",
   "communityLink": "https://community.hubitat.com/t/re-release-fronius-solar-inverter-driver-for-hubitat/138555?u=djos",
   "drivers": [
     {
