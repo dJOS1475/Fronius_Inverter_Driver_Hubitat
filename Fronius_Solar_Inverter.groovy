@@ -22,7 +22,7 @@
  *  May 2024 - Forked by Derek Osborn 
  *	v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access
  *  v2.1.0 - Converted Lifetime Energy to Megawatt hours for improved legibility 
- *  v2.2.0 - I realised I could have reused some existing functions, so I've rewritten a few bits to make the code more efficient
+ *  v2.2.0 - I realised I could have reused some existing functions, so I've rewritten a few bits to make the code more efficient. I also changed generation for this year to MWh's as this number can get pretty big too.
  *  
  *  Source:
  *  https://github.com/dJOS1475/Fronius_Inverter_Driver_Hubitat
