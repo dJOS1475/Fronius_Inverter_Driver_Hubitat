@@ -22,6 +22,7 @@
  *  May 2024 - Forked by Derek Osborn 
  *	v2.0.0 - Updated to convert Watt hours to Kilowatt hours, Added Dashboard tile, and published to HPM for easier access
  *  v2.1.0 - Converted Lifetime Energy to Megawatt hours for improved legibility 
+ *  v2.2.0 - I realised I could have reused some existing functions, so I've rewritten a few bits to make the code more efficient
  *  
  *  Source:
  *  https://github.com/dJOS1475/Fronius_Inverter_Driver_Hubitat
@@ -35,7 +36,7 @@ import groovy.json.JsonSlurper
 import java.math.BigDecimal
 
 def version() {
-    return "2.1.0"
+    return "2.2.0"
 }
 
 preferences {
@@ -67,10 +68,10 @@ metadata {
 	attribute "TotalEnergy", "number"
 	attribute "YearValue", "number"
 	attribute "DayValue", "number"
+    attribute "eYear", "number"
+    attribute "power", "number"
+    attribute "energy", "number"
     attribute 'healthStatus', 'enum', ['unknown', 'offline', 'online']
-    attribute "energyTodayKWh", "number"
-    attribute "energyTotalMWh", "number"
-    attribute "energyYearKWh", "number"
     attribute "htmlEnergy", "string"
 	}
 }
@@ -112,37 +113,14 @@ def parse(String description) {
 		int power = pPV != null ? pPV.toInteger() : 0
 
 		sendEvent(name: "power", value: power, unit: "W" )
-		sendEvent(name: "energy", value: dayValue, unit: "Wh")
-		sendEvent(name: "eYear", value: yearValue / 1000, unit: "kWH")
-		def value = new BigDecimal(totalValue / 1000).setScale(3, BigDecimal.ROUND_HALF_UP)
-		sendEvent(name: "TotalEnergy", value: value, unit: "kWH")
+        def valueE = new BigDecimal(dayValue / 1000).setScale(2, BigDecimal.ROUND_HALF_UP)
+		sendEvent(name: "energy", value: valueE, unit: "kWh")
+        def valueY = new BigDecimal(yearValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
+		sendEvent(name: "eYear", value: valueY, unit: "kWh")
+		def valueT = new BigDecimal(totalValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
+		sendEvent(name: "TotalEnergy", value: valueT, unit: "MWh")
 		sendEvent(name: "pGrid", value: pGrid, unit: "W")
 		sendEvent(name: "pLoad", value: pLoad, unit: "W")
-
-        //Convert Wh values to kWh Values
-        def energyValuesWh = [
-            energyTodayWh: result.Body.Data.Site.E_Day,
-            energyYearWh: result.Body.Data.Site.E_Year,
-        ]
-        
-        energyValuesWh.each { name, whValue ->
-            def kwhValue = Math.round((whValue / 1000.0) * 100) / 100.0
-            sendEvent(name: name, value: whValue)
-            sendEvent(name: name.replace("Wh", "KWh"), value: kwhValue)
-            log.debug "${whValue} Wh is equal to ${kwhValue} kWh"
-        }
-
-        // Convert Wh values to MWh Values
-        def energyValuesWh2 = [
-            energyTotalWh2: result.Body.Data.Site.E_Total,
-        ]
-
-        energyValuesWh2.each { name, whValue2 ->
-            def MwhValue = Math.round((whValue2 / 1000000.0) * 100) / 100.0
-            sendEvent(name: name, value: whValue2)
-            sendEvent(name: "energyTotalMWh", value: MwhValue)
-            log.debug "${whValue2} Wh is equal to ${MwhValue} MWh"
-        }
 
         //Update HTML Tile
         htmlTile()
@@ -162,10 +140,10 @@ def parse(String description) {
 def htmlTile() {	
 	htmlEnergy ="<div style='line-height:1.0; font-size:0.75em;'><br>Solar Energy Produced:<br></div>"
     htmlEnergy +="<div style='line-height:50%;'><br></div>"
-    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Today: ${device.currentValue('energyTodayKWh')} kWh<br></div>"
+    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Today: ${device.currentValue('energy')} kWh<br></div>"
     htmlEnergy +="<div style='line-height:50%;'><br></div>"
-    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>This Year: ${device.currentValue('energyYearKWh')} kWh<br></div>"
-    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Lifetime: ${device.currentValue('energyTotalMWh')} MWh<br></div>"
+    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>This Year: ${device.currentValue('eYear')} MWh<br></div>"
+    htmlEnergy +="<div style='line-height:1.0; font-size:0.75em;'><br>Lifetime: ${device.currentValue('TotalEnergy')} MWh<br></div>"
 	sendEvent(name: "htmlEnergy", value: htmlEnergy)
 	if(txtEnable == true){log.debug "htmlEnergy contains ${htmlEnergy}"}		
 	if(txtEnable == true){log.debug "${htmlEnergy.length()}"}			
