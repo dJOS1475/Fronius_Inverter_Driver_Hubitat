@@ -24,6 +24,7 @@
  *  v2.1.0 - Converted Lifetime Energy to Megawatt hours for improved legibility 
  *  v2.2.0 - I realised I could have reused some existing functions, so I've rewritten a few bits to make the code more efficient. I also changed generation for this year to MWh's as this number can get pretty big too.
  *  v2.2.1 - added a 250ms delay to the tile generation to ensure all data is updated first
+ *  v2.3.0 - added GEN24 Inverter compatibility mode
  *  
  *  Source:
  *  https://github.com/dJOS1475/Fronius_Inverter_Driver_Hubitat
@@ -37,7 +38,7 @@ import groovy.json.JsonSlurper
 import java.math.BigDecimal
 
 def version() {
-    return "2.2.1"
+    return "2.3.0"
 }
 
 preferences {
@@ -45,6 +46,7 @@ preferences {
 	input("inverterNumber", "number", title: "Inverter Number", description: "The Inverter Number", required: true, displayDuringSetup: true)
 	input("destIp", "text", title: "IP", description: "The device IP", required: true, displayDuringSetup: true)
 	input("destPort", "number", title: "Port", description: "The port you wish to connect", required: true, displayDuringSetup: true)
+	input("compatMode", "bool", title: "GEN24 Compatibility", required: true, defaultValue: false)
 	input("logDebugEnable", "bool", title: "Enable Debug logging", required: true, defaultValue: false)
 }
 
@@ -102,26 +104,49 @@ def parse(String description) {
 		sendEvent(name: "errorCode", value: 0 )
 		if(logDebugEnable) log.debug "Received data from inverter: ${result.Body.Data.Site}"
 
-		int yearValue = result.Body.Data.Site.E_Year
-		int dayValue = result.Body.Data.Site.E_Day
-		int totalValue = result.Body.Data.Site.E_Total
-		def pGridValue = result.Body.Data.Site.P_Grid
-		int pGrid = pGridValue != null ? pGridValue.toInteger() : 0
-		def pLoadValue = result.Body.Data.Site.P_Load
-		int pLoad = pLoadValue != null ? pLoadValue.toInteger() : 0
-			pLoad = -pLoad
-		def pPV = result.Body.Data.Site.P_PV
-		int power = pPV != null ? pPV.toInteger() : 0
+			if(compatMode){
+					//int yearValue = result.Body.Data.Site.E_Year
+					//int dayValue = result.Body.Data.Site.E_Day
+					int totalValue = result.Body.Data.Site.E_Total
+					def pGridValue = result.Body.Data.Site.P_Grid
+					int pGrid = pGridValue != null ? pGridValue.toInteger() : 0
+					def pLoadValue = result.Body.Data.Site.P_Load
+					int pLoad = pLoadValue != null ? pLoadValue.toInteger() : 0
+						pLoad = -pLoad
+					def pPV = result.Body.Data.Site.P_PV
+					int power = pPV != null ? pPV.toInteger() : 0
 
-		sendEvent(name: "power", value: power, unit: "W" )
-        def valueE = new BigDecimal(dayValue / 1000).setScale(2, BigDecimal.ROUND_HALF_UP)
-		sendEvent(name: "energy", value: valueE, unit: "kWh")
-        def valueY = new BigDecimal(yearValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
-		sendEvent(name: "eYear", value: valueY, unit: "kWh")
-		def valueT = new BigDecimal(totalValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
-		sendEvent(name: "TotalEnergy", value: valueT, unit: "MWh")
-		sendEvent(name: "pGrid", value: pGrid, unit: "W")
-		sendEvent(name: "pLoad", value: pLoad, unit: "W")
+					sendEvent(name: "power", value: power, unit: "W" )
+					//def valueE = new BigDecimal(dayValue / 1000).setScale(2, BigDecimal.ROUND_HALF_UP)
+					//sendEvent(name: "energy", value: valueE, unit: "kWh")
+					//def valueY = new BigDecimal(yearValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
+					//sendEvent(name: "eYear", value: valueY, unit: "kWh")
+					def valueT = new BigDecimal(totalValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
+					sendEvent(name: "TotalEnergy", value: valueT, unit: "MWh")
+					sendEvent(name: "pGrid", value: pGrid, unit: "W")
+					sendEvent(name: "pLoad", value: pLoad, unit: "W")}
+				else {
+					int yearValue = result.Body.Data.Site.E_Year
+					int dayValue = result.Body.Data.Site.E_Day
+					int totalValue = result.Body.Data.Site.E_Total
+					def pGridValue = result.Body.Data.Site.P_Grid
+					int pGrid = pGridValue != null ? pGridValue.toInteger() : 0
+					def pLoadValue = result.Body.Data.Site.P_Load
+					int pLoad = pLoadValue != null ? pLoadValue.toInteger() : 0
+						pLoad = -pLoad
+					def pPV = result.Body.Data.Site.P_PV
+					int power = pPV != null ? pPV.toInteger() : 0
+
+					sendEvent(name: "power", value: power, unit: "W" )
+					def valueE = new BigDecimal(dayValue / 1000).setScale(2, BigDecimal.ROUND_HALF_UP)
+					sendEvent(name: "energy", value: valueE, unit: "kWh")
+					def valueY = new BigDecimal(yearValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
+					sendEvent(name: "eYear", value: valueY, unit: "kWh")
+					def valueT = new BigDecimal(totalValue / 1000000).setScale(2, BigDecimal.ROUND_HALF_UP)
+					sendEvent(name: "TotalEnergy", value: valueT, unit: "MWh")
+					sendEvent(name: "pGrid", value: pGrid, unit: "W")
+					sendEvent(name: "pLoad", value: pLoad, unit: "W")}
+
 
         //Update HTML Tile
         htmlTile()
