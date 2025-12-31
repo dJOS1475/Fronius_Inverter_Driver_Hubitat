@@ -1,7 +1,7 @@
 {
   "packageName": "Fronius Solar Inverter Driver for Hubitat",
   "author": "Derek Osborn",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "minimumHEVersion": "2.2.2",
   "dateReleased": "2024-05-28",
   "releaseNotes": " v2.4.0 - Bug fixes and improvements: fixed textVersion(), improved error handling, added input validation, fixed compatMode HTML tile issues, added constants, improved null safety, enhanced logging, made schedules configurable",
